@@ -7,18 +7,19 @@ require(quanteda.textmodels)
 require(readr)
 library(pubmedR)
 
-
+```{r echo = F}
 query = "cost AND DALY[Title/Abstract]"
 api_key = "adb7c4029ba414a3108f116d2f609e4aae08" 
-
+```
 
 
 #wyszukanie literatury
+```{r echo = F}
 q <- pubmedR::pmQueryTotalCount(query)
 D <- pubmedR::pmApiReques(query,limit = q$total_count)
-
 metadata <- pubmedR::pmApi2df(D, format = "bibliometrix")
-
-
-q
+```
+```{r}
+q``
 D
+```
