@@ -1,0 +1,24 @@
+require(dplyr)
+require(pubmed.mineR)
+require(quanteda)
+require(bibliometrix)
+require(ggplot2)
+require(quanteda.textmodels)
+require(readr)
+library(pubmedR)
+
+
+query = "cost AND DALY[Title/Abstract]"
+api_key = "adb7c4029ba414a3108f116d2f609e4aae08" 
+
+
+
+#wyszukanie literatury
+q <- pubmedR::pmQueryTotalCount(query)
+D <- pubmedR::pmApiReques(query,limit = q$total_count)
+
+metadata <- pubmedR::pmApi2df(D, format = "bibliometrix")
+
+
+q
+D
