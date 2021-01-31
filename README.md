@@ -84,12 +84,6 @@ datacorp <-  corpus(data,
          text_field = "AB_TM", 
          docid_field = "PMID",
          unique_docnames = F)
-
-corpus(data, 
-         text_field = "TI", 
-         docid_field = "PMID",
-         unique_docnames = F)
-summary(datacorp)
 ```
 
 ```{r echo = F, eval = F}
@@ -99,7 +93,7 @@ data %>%
     summary() %>%
     head(2)
 ```
-
+ddddddd
 
 ####
 
