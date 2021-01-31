@@ -1,0 +1,52 @@
+require(dplyr)
+require(pubmed.mineR)
+require(RISmed)
+require(quanteda)
+require(bibliometrix)
+require(ggplot2)
+require(quanteda.textmodels)
+require(tidyverse)  
+library(pubmed.mineR)
+library(pubmedR)
+
+query = '"disability-adjusted life years"[Title/Abstract] AND cost*[Title/Abstract] AND 2010:2021[dp]'
+setwd("~/ANALITYKA/AOTMiT/Nowotwór piersi/cost_model/Model NLM")
+
+q <- pmQueryTotalCount(query)
+D <- pubmedR::pmApiRequest(q = query, api_key = api_key, limit = q$total_count)
+metadata <- pubmedR::pmApi2df(D, format = "bibliometrix")
+dataset1 <- metadata %>%
+  filter(PY %in% c(2010:2021)) %>%
+  termExtraction("AB") %>%
+  termExtraction("TI") %>%
+  termExtraction("DE")
+
+#PUBMED
+abs <-bibliometrix::convert2df("abs_meta.txt", dbsource = "pubmed", format = "csv")
+abs <- abs %>%
+  select(Abstract = AB)
+  
+dataabs <- left_join(dataset1, abs, by = "PMID", suffix = c("", "_abs"))
+write.table(dataset1, file = "datapm.txt", sep = ";")
+  
+ #RISmed
+query_ris <- query %>%
+  RISmed::EUtilsSummary() %>%
+  RISmed::EUtilsGet()
+abs_rismed <- data.frame(Title = query_ris@ArticleTitle,
+                       Abstract = query_ris@AbstractText, 
+                       PMID = query_ris@PMID, 
+                       Year = query_ris@YearPubmed,
+                       Country = query_ris@Country)
+dataris <- left_join(dataset1, abs_rismed, by = "PMID", suffix = c("", "_ris"))
+write.table(dataset1, file = "dataris.txt", sep = ";")
+
+data <- left_join(dataabs, abs_rismed, by = "PMID", suffix = c("", "_ris"))
+write.table(dataset1, file = "data.txt", sep = ";")
+
+url <- httr::GET("https://raw.githubusercontent.com/piotrzamaro/NLP-in-healthcare/main/data.txt")
+data_url <- url$ur
+data <- read.delim2(data_url, sep = ";")
+
+                       
+
